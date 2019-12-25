@@ -1,0 +1,8 @@
+// Helpers
+@import "helpers/module";
+
+// Common (основные стили.)
+@import "common/module";
+
+// Modules (большие куски. Шапка, футер, продукт)
+@import "components/module";

@@ -4,4 +4,4 @@
 1) `npm i`
 2) `gulp`
 
-version: 1.0
+version: 2.0

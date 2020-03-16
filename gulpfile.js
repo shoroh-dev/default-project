@@ -1,12 +1,12 @@
 const gulp = require('gulp'),
-  prefixer = require('gulp-autoprefixer'),
-  uglify = require('gulp-uglify'),
+  autoPrefixer = require('gulp-autoprefixer'),
   sass = require('gulp-sass'),
   sourcemaps = require('gulp-sourcemaps'),
   rigger = require('gulp-rigger'),
-  cssmin = require('gulp-minify-css'),
+  cleanCSS = require('gulp-clean-css'),
   rimraf = require('rimraf'),
   browserSync = require("browser-sync"),
+  concat = require("gulp-concat"),
   reload = browserSync.reload;
 
 const path = {
@@ -19,7 +19,7 @@ const path = {
   },
   src: { //Пути откуда брать исходники
     html: 'src/*.html', //Синтаксис src/*.html говорит gulp что мы хотим взять все файлы с расширением .html
-    js: 'src/js/main.js',//В стилях и скриптах нам понадобятся только main файлы
+    js: 'src/js/*.js',//В стилях и скриптах нам понадобятся только main файлы
     style: 'src/styles/main.scss',
     img: 'src/img/**/*.*',
     fonts: 'src/fonts/**/*.*'
@@ -41,7 +41,7 @@ const config = {
   tunnel: false, // для тунелирования доступа в сеть
   host: 'localhost',
   port: 4550,
-  logPrefix: "shoroh"
+  logPrefix: "VoHorosh"
 };
 
 buildHtml = (done) => {
@@ -54,11 +54,8 @@ buildHtml = (done) => {
 };
 
 buildJs = (done) => {
-  gulp.src(path.src.js) //Найдем наш main файл
-    .pipe(rigger()) //Прогоним через rigger
-    .pipe(sourcemaps.init()) //Инициализируем sourcemap
-    .pipe(uglify()) //Сожмем наш js
-    .pipe(sourcemaps.write()) //Пропишем карты
+  gulp.src(path.src.js) //Найдем наши js файлы
+    .pipe(concat('main.js')) // Соберем все в один файл
     .pipe(gulp.dest(path.build.js)) //Выплюнем готовый файл в build
     .pipe(reload({stream: true})); //И перезагрузим сервер
 
@@ -73,8 +70,8 @@ buildStyles = (done) => {
       outputStyle: 'compressed'
     }))
     .on('error', console.error.bind(console))
-    .pipe(prefixer()) //Добавим вендорные префиксы
-    .pipe(cssmin()) //Сожмем
+    .pipe(autoPrefixer()) //Добавим вендорные префиксы
+    .pipe(cleanCSS({compatibility: 'ie8'})) //Сожмем
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(path.build.css)) //И в build
     .pipe(reload({stream: true}));
